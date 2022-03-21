@@ -5,15 +5,18 @@ let fast_mode = true;
 
 let c0, c1, c2, c3, c4;
 
+let radius;
+let r1, r2;
+
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(800, 800);
 
   // color
-  c0 = color(165, 35, 110);
-  c1 = color(235, 30, 75);
-  c2 = color(240, 105, 55);
-  c3 = color(245, 220, 80);
-  c4 = color(40, 150, 155);
+  c0 = color(40,45,50);
+  c1 = color(245,75,75);
+  c2 = color(240,210,190);
+  c3 = color(95,80,75);
+  c4 = color(255);
 
   for (let x = 0; x < width; x++) {
     grid[x] = [];
@@ -22,17 +25,20 @@ function setup() {
     }
   }
 
-  grid[200][200] = 100000;
+  grid[width / 2][height / 2] = 200000;
   next_grid = grid.slice();
+
+  r1 = height / 2 - 5;
+  r2 = height / 2 + 5;
 }
 
 function draw() {
-  background(0);
+  background(c0);
 
-  fast_mode = grid[200][200] > 4;
+  fast_mode = grid[width / 2][height / 2] > 4;
 
   if (fast_mode) {
-    for (let it = 0; it <100; it++) {
+    for (let it = 0; it < 200; it++) {
       update_grid();
     }
   } else {
@@ -40,8 +46,8 @@ function draw() {
   }
 
   loadPixels();
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
+  for (let x = r1 - 10; x < r2 + 10; x++) {
+    for (let y = r1 - 10; y < r2 + 10; y++) {
 
       let c;
       switch (grid[x][y]) {
@@ -71,7 +77,7 @@ function draw() {
     noStroke();
     fill(255);
     textAlign(LEFT);
-    text("central value : " + grid[200][200], 20, 20);
+    text("central value : " + grid[width / 2][height / 2], 20, 20);
     text(" : 0\n : 1\n : 2\n : 3\n : >3", 33, 35);
     rectMode(CENTER);
     stroke(255);
@@ -90,14 +96,25 @@ function draw() {
     fill(255);
     text("fast mode", width / 2, height - 20);
   }
+
+  checkRadius();
 }
 
+function checkRadius() {
+  for (let r = r1 - 20; r < height / 2; r++) {
+    if (grid[width / 2][r] != 0) {
+      r1 = r;
+      r2 = height - r;
+      break;
+    }
+  }
+}
 
 function update_grid() {
   next_grid = grid.slice();
   change = false;
-  for (let x = 1; x < width - 1; x++) {
-    for (let y = 1; y < height - 1; y++) {
+  for (let x = r1 - 10; x < r2 + 10; x++) {
+    for (let y = r1 - 10; y < r2 + 10; y++) {
       if (grid[x][y] > 3) {
         change = true;
         next_grid[x][y] -= 4;
